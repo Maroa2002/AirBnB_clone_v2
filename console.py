@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -10,7 +11,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+from datetime import datetime
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -113,48 +114,37 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
+
     def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
+        '''
+        Create a new instance of a specified class with given parameters
+        and save it to the JSON file.
+        '''
+    
+        if len(args) == 0:
             print("** class name missing **")
             return
-
-        class_name, *params = args.split()
-        print("Class name:", class_name)  # Debugging statement
-        print("Params:", params)          # Debugging statement
-        if class_name not in HBNBCommand.classes:
+        try:
+            args = shlex.split(args)
+            new_instance = eval(args[0])()
+            for i in args[1:]:
+                try:
+                    key = i.split("=")[0]
+                    value = i.split("=")[1]
+                    if hasattr(new_instance, key) is True:
+                        value = value.replace("_", " ")
+                        try:
+                            value = eval(value)
+                        except:
+                            pass
+                        setattr(new_instance, key, value)
+                except (ValueError, IndexError):
+                    pass
+            new_instance.save()
+            print(new_instance.id)
+        except:
             print("** class doesn't exist **")
             return
-
-        formatted_params = {}
-        for param in params:
-            key_name, value = param.split('=')
-
-            # string value syntax
-            if value.startswith('"') and value.endswith('"'):
-                # remove "", replace _ with ' ', unescape " in string
-                value = value[1:-1].replace('_', ' ').replace('\\"', '"')
-            
-            # float value syntax
-            elif '.' in value:
-                try:
-                    value = float(value) # convert to float
-                except ValueError:
-                    continue # skips invalid float number
-
-            # integer value syntax
-            else:
-                try:
-                    value = int(value) # convert to integer
-                except ValueError:
-                    continue # skips invalid integer value
-
-            formatted_params[key_name] = value
-	    	
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
