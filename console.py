@@ -13,6 +13,7 @@ from models.amenity import Amenity
 from models.review import Review
 from datetime import datetime
 
+
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
 
@@ -125,6 +126,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
+        # main logic of do_create function
         try:
             args = shlex.split(args)
             class_name = args[0]
@@ -132,25 +134,30 @@ class HBNBCommand(cmd.Cmd):
             if class_name not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-
+            
+            # creating an instance of the specified class
             new_instance = HBNBCommand.classes[class_name]()
 
+            # loop through remaining elements of args
             for arg in args[1:]:
                 try:
                     key, value = arg.split("=")
+                    # check if new_instance has key attribute
                     if hasattr(new_instance, key):
+                        # replace _ with space
                         value = value.replace("_", " ")
                         try:
                             value = eval(value)
                         except:
                             pass
+                        # set key attribute of instance to value
                         setattr(new_instance, key, value)
                 except (ValueError, IndexError):
                     pass
 
-            new_instance.save()
-            print(new_instance.id)
-        except:
+            new_instance.save() # save instance to json
+            print(new_instance.id) # print id 
+        except: # catch any errors that might occur
             print("** error creating instance **")
 
     def help_create(self):
