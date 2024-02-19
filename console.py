@@ -124,14 +124,21 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
+
         try:
             args = shlex.split(args)
-            new_instance = eval(args[0])()
-            for i in args[1:]:
+            class_name = args[0]
+            
+            if class_name not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+
+            new_instance = HBNBCommand.classes[class_name]()
+
+            for arg in args[1:]:
                 try:
-                    key = i.split("=")[0]
-                    value = i.split("=")[1]
-                    if hasattr(new_instance, key) is True:
+                    key, value = arg.split("=")
+                    if hasattr(new_instance, key):
                         value = value.replace("_", " ")
                         try:
                             value = eval(value)
@@ -140,11 +147,11 @@ class HBNBCommand(cmd.Cmd):
                         setattr(new_instance, key, value)
                 except (ValueError, IndexError):
                     pass
+
             new_instance.save()
             print(new_instance.id)
         except:
-            print("** class doesn't exist **")
-            return
+            print("** error creating instance **")
 
     def help_create(self):
         """ Help information for the create method """
