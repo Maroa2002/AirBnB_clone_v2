@@ -10,28 +10,26 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        if cls is None:
-            return self.__objects
-        
-        if cls != "":
+        if cls:
             filtered_objs = {}
             for key, obj in self.__objects.items():
                 if type(obj) == cls:
                     filtered_objs[key] = obj
-                return filtered_objs
+            return filtered_objs
         else:
             return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
+        key = "{}.{}".format(type(obj).__name__, obj.id)
+        self.__objects[key] = obj
 
     def save(self):
         """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:
             temp = {}
-            temp.update(FileStorage.__objects)
-            for key, val in temp.items():
+          #  temp.update(FileStorage.__objects)
+            for key, val in self.__objects.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
@@ -55,13 +53,22 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    cls = val['__class__']
+                    cls_model = classes.get(cls)
+                    if cls_model:
+                        key = "{}.{}".format(cls, val['id'])
+                        self.__objects[key] = cls_model(**val)
         except FileNotFoundError:
             pass
+        except json.decoder.JSONDecodeError:
+            temp = {}
 
     def delete(self, obj=None):
         """delete obj from __objects if inside """
         if obj is not None:
-            key = "{}:{}".format(obj.__class__.__name__, obj.id)
+            key = "{}:{}".format(type(obj).__name__, obj.id)
             if key in self.__objects:
                 del self.__objects[key]
+                self.save()
+        else:
+            pass
