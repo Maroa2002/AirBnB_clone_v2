@@ -28,6 +28,6 @@ class Place(BaseModel, Base):
         from models import storage
         rvs_list = []
         for rv in storage.all('Review').value():
-            if rv.place_id = Place.id:
+            if rv.place_id == Place.id:
                 rvs_list.append(Review)
         return rvs_list
