@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """database storage engine"""
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from os import getenv
 from models.city import City
 from models.state import State
