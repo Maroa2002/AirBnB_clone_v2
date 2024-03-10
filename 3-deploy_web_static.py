@@ -3,7 +3,8 @@
 Full deployment
 """
 from os.path import exists
-from fabric.api import put, sudo, env
+from fabric.api import put, sudo, env, local
+from datetime import datetime
 
 
 env.hosts = ["18.209.179.165", "52.91.117.26"]
