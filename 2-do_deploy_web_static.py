@@ -3,7 +3,7 @@
 Distributing an archive to a server
 """
 from os.path import exists
-from fabric.api import put, sudo
+from fabric.api import put, sudo, env
 
 
 env.hosts = ["18.209.179.165", "52.91.117.26"]
