@@ -25,7 +25,8 @@ fake_html="
 # creating a fake html file
 echo "$fake_html" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
-# creating a symbolic link that is deleted if exists and recreated when script is rumsudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+# creating a symbolic link that is deleted if exists and recreated when script is run
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # giving ownership
 sudo chown -R ubuntu:ubuntu /data/
