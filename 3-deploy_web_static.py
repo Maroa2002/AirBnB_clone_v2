@@ -40,6 +40,7 @@ def do_pack():
     else:
         return None
 
+
 def do_deploy(archive_path):
     """
     Distributes an archive to my web servers
@@ -93,11 +94,13 @@ def do_deploy(archive_path):
         print(e)
         return False
 
+
 def deploy():
     """
     Creates and distributes an archive to your web servers
     Returns:
-        True if all operations have been done correctly, otherwise returns False
+        True if all operations have been done correctly,
+        otherwise returns False
     """
     # Create the archive
     archive_path = do_pack()
@@ -108,4 +111,3 @@ def deploy():
 
     # Deploy the archive
     return do_deploy(archive_path)
-
