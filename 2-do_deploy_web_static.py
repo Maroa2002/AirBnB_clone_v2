@@ -33,8 +33,6 @@ def do_deploy(archive_path):
                 /data/web_static/releases/web_static_{}/'
              .format(timestamp))
 
-        # Uncompress archive, delete archive, Move files into Host
-        # web_static then remove the src web_static dir
         sudo('tar -vxzf /tmp/web_static_{}.tgz -C \
             /data/web_static/releases/web_static_{}/'
              .format(timestamp, timestamp))
@@ -49,13 +47,13 @@ def do_deploy(archive_path):
             /data/web_static/releases/web_static_{}/web_static'
              .format(timestamp))
 
-        # Delete pre-existing sym link and re-establish
         sudo('rm -rf /data/web_static/current')
 
         sudo('ln -s /data/web_static/releases/web_static_{}/ \
             /data/web_static/current'.format(timestamp))
 
+        print("New version deployed!")
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
-
