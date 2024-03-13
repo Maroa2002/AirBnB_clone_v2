@@ -59,35 +59,28 @@ def do_deploy(archive_path):
         # uploading the archive to /tmp/ directory of the web server
         put(archive_path, "/tmp/")
 
-        archive_name = archive_path.split('/')[-1]
-        folder_name = archive_name.split('.')[0]
+        timestamp = archive_path.split('.')[0][-14:]
+        sudo('mkdir -p \
+             /data/web_static/releases/web_static_{}/'
+             .format(timestamp))
 
-        # Uncompress the archive to the folder
-        # /data/web_static/releases/<archive filename without extension>
-        sudo("mkdir -p \
-             /data/web_static/releases/{}".format(folder_name))
-        sudo("tar -vxzf \
-             /tmp/{} -C /data/web_static/releases/{}".format(archive_name,
-                                                             folder_name))
+        sudo('tar -vxzf /tmp/web_static_{}.tgz -C \
+             /data/web_static/releases/web_static_{}/'
+             .format(timestamp, timestamp))
 
-        # Delete the archive from the web server
-        sudo("rm /tmp/{}".format(archive_name))
+        sudo('rm /tmp/web_static_{}.tgz'.format(timestamp))
 
-        sudo("mv /data/web_static/releases/{}/web_static/* \
-            /data/web_static/releases/{}"
-             .format(folder_name, folder_name))
-        sudo("rm -rf \
-            /data/web_static/releases/{}/web_static"
-             .format(folder_name))
+        sudo('mv /data/web_static/releases/web_static_{}/web_static/* \
+             /data/web_static/releases/web_static_{}/'
+             .format(timestamp, timestamp))
 
-        # Delete the symbolic link /data/web_static/current from the web server
-        sudo("rm -rf /data/web_static/current")
+        sudo('rm -rf /data/web_static/releases/web_static_{}/web_static'
+             .format(timestamp))
 
-        # Create a new symbolic link /data/web_static/current on the web server
-        # Linked to the new version of my code
-        # (/data/web_static/releases/<archive filename without extension>)
-        sudo("ln -s /data/web_static/releases/{}/\
-             /data/web_static/current".format(folder_name))
+        sudo('rm -rf /data/web_static/current')
+
+        sudo('ln -s /data/web_static/releases/web_static_{}/ \
+             /data/web_static/current'.format(timestamp))
 
         print("New version deployed!")
         return True
