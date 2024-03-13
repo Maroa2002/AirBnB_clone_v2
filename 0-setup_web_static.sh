@@ -32,12 +32,12 @@ sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 sudo chown -R ubuntu:ubuntu /data/
 
 # updating nginx configuration
-nginx_config="/etc/nginx/sites-available/default"
 if ! sudo grep -q "alias /data/web_static/current/;" /etc/nginx/sites-enabled/default; then
-    sudo sed -i '/^\s*server_name _;/a\\n\
-        location /hbnb_static/ {\n\
-            alias /data/web_static/current/;\n\
-        }\n' "$nginx_config"
+    sudo sed -i "\#server_name _;#a \\
+        location /hbnb_static { \\
+            alias /data/web_static/current/; \\
+        } \\
+        "  /etc/nginx/sites-enabled/default
 fi
 
 # restarting nginx
