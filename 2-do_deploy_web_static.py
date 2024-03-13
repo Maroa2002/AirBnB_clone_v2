@@ -30,27 +30,26 @@ def do_deploy(archive_path):
 
         timestamp = archive_path.split('.')[0][-14:]
         sudo('mkdir -p \
-                /data/web_static/releases/web_static_{}/'
+             /data/web_static/releases/web_static_{}/'
              .format(timestamp))
 
         sudo('tar -vxzf /tmp/web_static_{}.tgz -C \
-            /data/web_static/releases/web_static_{}/'
+             /data/web_static/releases/web_static_{}/'
              .format(timestamp, timestamp))
 
         sudo('rm /tmp/web_static_{}.tgz'.format(timestamp))
 
         sudo('mv /data/web_static/releases/web_static_{}/web_static/* \
-            /data/web_static/releases/web_static_{}/'
+             /data/web_static/releases/web_static_{}/'
              .format(timestamp, timestamp))
 
-        sudo('rm -rf \
-            /data/web_static/releases/web_static_{}/web_static'
+        sudo('rm -rf /data/web_static/releases/web_static_{}/web_static'
              .format(timestamp))
 
         sudo('rm -rf /data/web_static/current')
 
         sudo('ln -s /data/web_static/releases/web_static_{}/ \
-            /data/web_static/current'.format(timestamp))
+             /data/web_static/current'.format(timestamp))
 
         print("New version deployed!")
         return True
